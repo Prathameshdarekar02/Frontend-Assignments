@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 23px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgb(34,193,195);
+            background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 92%);
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            width: 120px;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        p {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        ul {
+            list-style-type: circle;
+            padding-left: 16px;
+            padding-top: 0px;
+            font-size: 20px;
+            text-align: left;
+        }
+        #result {
+            padding-right: 266px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Age Calculator</h2>
+        <label id="Birthdate" for="birthdate"><h3>Enter Your Birthdate</h3></label>
+        <input type="date" id="birthdate">
+        <button id="calculateBtn">Calculate</button>
+        <button id="resetBtn">Reset</button>
+        <br /><br />
+        <div id="result" style="display: none;">
+            <label id="result">Result:</label>
+            <ul id="ageList">
+                <li id="years"></li>
+                <li id="months"></li>
+                <li id="days"></li>
+                <li id="hours"></li>
+                <li id="minutes"></li>
+                <li id="seconds"></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', calculateAge);
+        document.getElementById('resetBtn').addEventListener('click', resetDate);
+
+        function calculateAge() {
+            var birthdate = new Date(document.getElementById('birthdate').value);
+            var today = new Date();
+
+            var ageInMilliseconds = today - birthdate;
+
+            var years = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24 * 365.25));
+            var months = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24 * 30.4375)) % 12;
+            var days = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24)) % 30.4375;
+            var hours = Math.floor(ageInMilliseconds / (1000 * 60 * 60)) % 24;
+            var minutes = Math.floor(ageInMilliseconds / (1000 * 60)) % 60;
+            var seconds = Math.floor(ageInMilliseconds / 1000) % 60;
+
+            // Adjust minutes if seconds exceed 60
+            if (seconds >= 60) {
+                minutes += Math.floor(seconds / 60);
+                seconds %= 60;
+            }
+
+            document.getElementById('years').innerHTML = "Years: " + years;
+            document.getElementById('months').innerHTML = "Months: " + months;
+            document.getElementById('days').innerHTML = "Days: " + days;
+            document.getElementById('hours').innerHTML = "Hours: " + hours;
+            document.getElementById('minutes').innerHTML = "Minutes: " + minutes;
+            document.getElementById('seconds').innerHTML = "Seconds: " + seconds;
+
+            document.getElementById('result').style.display = "block";
+        }
+
+        function resetDate() {
+            document.getElementById('birthdate').value = "";
+            document.getElementById('result').style.display = "none";
+        }
+
+        // Update seconds every second
+        setInterval(updateSeconds, 1000);
+
+        function updateSeconds() {
+            var secondsElement = document.getElementById('seconds');
+            var currentSeconds = parseInt(secondsElement.textContent.split(':')[1]);
+            currentSeconds++;
+            if (currentSeconds >= 60) {
+                currentSeconds = 0;
+                var minutesElement = document.getElementById('minutes');
+                var currentMinutes = parseInt(minutesElement.textContent.split(':')[1]);
+                currentMinutes++;
+                minutesElement.textContent = "Minutes: " + currentMinutes;
+            }
+            secondsElement.textContent = "Seconds: " + currentSeconds;
+        }
+    </script>
+
+</body>
+</html>
