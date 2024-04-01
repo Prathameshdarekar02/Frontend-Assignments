@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        #question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 10px 20px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            .option:hover {
+                background-color: #eee;
+            }
+
+        .correct {
+            background-color: #a3e6be !important;
+        }
+
+        .incorrect {
+            background-color: #ff7f7f !important;
+        }
+
+        #submitBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            #submitBtn:hover {
+                background-color: #0056b3;
+            }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        /* Add styling for the selected option */
+        .option.selected {
+            background-color: lightblue;
+        }
+    </style>
+<</head>
+<body>
+
+    <div class="container">
+        <h1>Simple Quiz</h1>
+        <div id="question"></div>
+        <div id="options" class="options"></div>
+        <button id="submitBtn">Submit Answer</button>
+        <div id="feedback"></div>
+        <div id="score">Score: <span id="scoreValue">0</span></div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["Paris", "Berlin", "Madrid", "Rome"],
+                answer: "Paris"
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                answer: "4"
+            },
+            {
+                question: "Who wrote 'To Kill a Mockingbird'?",
+                options: ["Harper Lee", "Stephen King", "J.K. Rowling", "Mark Twain"],
+                answer: "Harper Lee"
+            },
+            {
+                question: "What is the largest planet in our solar system?",
+                options: ["Jupiter", "Saturn", "Neptune", "Earth"],
+                answer: "Jupiter"
+            },
+            {
+                question: "Which country is known as the Land of the Rising Sun?",
+                options: ["China", "Japan", "India", "South Korea"],
+                answer: "Japan"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let isAnswerSubmitted = false;
+
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const submitButton = document.getElementById('submitBtn');
+        const feedbackElement = document.getElementById('feedback');
+        const scoreElement = document.getElementById('scoreValue');
+
+        function loadQuestion() {
+            const currentQuizData = quizData[currentQuestion];
+            questionElement.innerText = currentQuizData.question;
+            optionsElement.innerHTML = "";
+            currentQuizData.options.forEach(option => {
+                const optionElement = document.createElement('button');
+                optionElement.innerText = option;
+                optionElement.classList.add('option');
+                optionElement.addEventListener('click', () => selectOption(option, currentQuizData.answer));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+
+        function selectOption(selectedOption, correctAnswer) {
+            if (!isAnswerSubmitted) {
+                const optionButtons = document.querySelectorAll('.option');
+                optionButtons.forEach(button => {
+                    button.disabled = true;
+                    if (button.innerText === selectedOption) {
+                        button.classList.add('selected'); // Add a class to highlight the selected option
+                    }
+                });
+
+                if (selectedOption === correctAnswer) {
+                    score++;
+                    feedbackElement.innerText = "Correct!";
+                } else {
+                    feedbackElement.innerText = "Incorrect!";
+                }
+                isAnswerSubmitted = true;
+                submitButton.disabled = false;
+            }
+        }
+
+        submitButton.addEventListener('click', () => {
+            currentQuestion++;
+            isAnswerSubmitted = false;
+            submitButton.disabled = true; // Disable submit button until user selects an option for the next question
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+                feedbackElement.innerText = ""; // Clear feedback for the next question
+            } else {
+                endQuiz();
+            }
+        });
+
+        function endQuiz() {
+            questionElement.innerText = "Quiz completed!";
+            optionsElement.innerHTML = "";
+            submitButton.style.display = 'none';
+            scoreElement.innerText = score;
+        }
+
+        loadQuestion();
+        submitButton.disabled = true; // Disable submit button initially until user selects an option
+    </script>
+</body>
+</html>
